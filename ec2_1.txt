@@ -11,7 +11,7 @@
 		"RootVolumeSize" : {
 		  "Description" : "The size of the EBS volume to attach",
 		  "Type" : "Number",
-		  "Default" : "40"
+		  "Default" : "25"
 		},
 		"SubnetIDs" : {
 			"Description" : "Subnet IDs",
