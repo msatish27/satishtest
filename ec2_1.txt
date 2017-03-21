@@ -1,0 +1,59 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "CloudFormation template to create a Red Hat Enterprise Linux 7.3 EC2 instance Oregon region",
+
+  "Parameters" : {
+		"KeyPairName" : {
+		  "Description" : "Name of an existing EC2 KeyPair to enable SSH access",
+		  "Type": "AWS::EC2::KeyPair::KeyName"
+		},
+		"RootVolumeSize" : {
+		  "Description" : "The size of the EBS volume to attach",
+		  "Type" : "Number",
+		  "Default" : "40"
+		},
+		"SubnetIDs" : {
+			"Description" : "Subnet IDs",
+			"Type" : "AWS::EC2::Subnet::Id"
+		},
+		"VPC" : {	
+			"Type" : "AWS::EC2::VPC::Id",
+			"Description" : "VpcId of your existing Virtual Private Cloud (VPC)"
+		}
+	},
+	
+	
+  "Mappings" : {
+	"RegionMap" : {
+      "us-west-2" : { "AMI" : "ami-6f68cf0f" }
+	  }
+	},
+
+	"Resources":{
+	  "Ec2Instance" : {
+		  "Type" : "AWS::EC2::Instance",
+		  "Properties" : {
+			"InstanceType": "t2.micro",
+			"SubnetId": {"Ref": "SubnetIDs"},
+			"ImageId": { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
+			"KeyName": {"Ref": "KeyPairName"},
+			"BlockDeviceMappings" : [
+			   {
+				  "DeviceName" : "/dev/sda1",
+				  "Ebs" : { 
+					  "VolumeType" : "gp2",
+					  "VolumeSize" : { "Ref": "RootVolumeSize" }
+					}
+			   }
+			],
+			"Tags": [
+			  {
+				"Key": "Name",
+				"Value": "Testserver1"
+			  }
+			]
+		  }
+		}
+	}
+}
